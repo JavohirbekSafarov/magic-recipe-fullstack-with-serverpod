@@ -14,10 +14,11 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../auth/email_idp_endpoint.dart' as _i2;
 import '../auth/jwt_refresh_endpoint.dart' as _i3;
 import '../recipes/recipes_endpoint.dart' as _i4;
+import 'package:magic_recipe_server/src/generated/recipes/recipe.dart' as _i5;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i5;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i6;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i7;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -269,11 +270,40 @@ class Endpoints extends _i1.EndpointDispatch {
                     ingredients: params['ingredients'],
                   ),
         ),
+        'getRecipes': _i1.MethodConnector(
+          name: 'getRecipes',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['recipes'] as _i4.RecipesEndpoint)
+                  .getRecipes(session),
+        ),
+        'deleteRecipe': _i1.MethodConnector(
+          name: 'deleteRecipe',
+          params: {
+            'recipe': _i1.ParameterDescription(
+              name: 'recipe',
+              type: _i1.getType<_i5.Recipe>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['recipes'] as _i4.RecipesEndpoint).deleteRecipe(
+                    session,
+                    params['recipe'],
+                  ),
+        ),
       },
     );
-    modules['serverpod_auth_idp'] = _i5.Endpoints()
+    modules['serverpod_auth_idp'] = _i6.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i6.Endpoints()
+    modules['serverpod_auth_core'] = _i7.Endpoints()
       ..initializeEndpoints(server);
   }
 }

@@ -16,7 +16,8 @@ import 'package:serverpod_client/serverpod_client.dart' as _i2;
 import 'dart:async' as _i3;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i4;
-import 'protocol.dart' as _i5;
+import 'package:magic_recipe_client/src/protocol/recipes/recipe.dart' as _i5;
+import 'protocol.dart' as _i6;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
@@ -246,11 +247,25 @@ class EndpointRecipes extends _i2.EndpointRef {
   @override
   String get name => 'recipes';
 
-  _i3.Future<String> generateRecipe({required String ingredients}) =>
-      caller.callServerEndpoint<String>(
+  _i3.Future<_i5.Recipe> generateRecipe({required String ingredients}) =>
+      caller.callServerEndpoint<_i5.Recipe>(
         'recipes',
         'generateRecipe',
         {'ingredients': ingredients},
+      );
+
+  _i3.Future<List<_i5.Recipe>> getRecipes() =>
+      caller.callServerEndpoint<List<_i5.Recipe>>(
+        'recipes',
+        'getRecipes',
+        {},
+      );
+
+  _i3.Future<_i5.Recipe> deleteRecipe(_i5.Recipe recipe) =>
+      caller.callServerEndpoint<_i5.Recipe>(
+        'recipes',
+        'deleteRecipe',
+        {'recipe': recipe},
       );
 }
 
@@ -285,7 +300,7 @@ class Client extends _i2.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i5.Protocol(),
+         _i6.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,

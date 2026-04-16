@@ -1,8 +1,9 @@
 import 'package:dartantic_ai/dartantic_ai.dart';
+import 'package:magic_recipe_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
 class RecipesEndpoint extends Endpoint {
-  Future<String> generateRecipe(
+  Future<Recipe> generateRecipe(
     Session session, {
     required String ingredients,
   }) async {
@@ -32,6 +33,27 @@ class RecipesEndpoint extends Endpoint {
       throw Exception('Gemini API javob bermadi!');
     }
 
-    return responseText;
+    final recipe = Recipe(
+      author: 'Gemini',
+      text: responseText,
+      date: DateTime.now(),
+      ingredients: ingredients,
+    );
+
+    final recipeWithId = await Recipe.db.insertRow(session, recipe);
+
+    return recipeWithId;
+  }
+
+  Future<List<Recipe>> getRecipes(Session session) async {
+    return await Recipe.db.find(
+      session,
+      orderBy: (t) => t.date,
+      orderDescending: true,
+    );
+  }
+
+  Future<Recipe> deleteRecipe(Session session, Recipe recipe) async {
+    return await Recipe.db.deleteRow(session, recipe);
   }
 }
